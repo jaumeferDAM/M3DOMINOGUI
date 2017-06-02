@@ -68,11 +68,11 @@ public class DominoGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 531, Short.MAX_VALUE)
+                .addGap(0, 531, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 409, Short.MAX_VALUE)
+                .addGap(0, 409, Short.MAX_VALUE)
         );
 
         pack();
@@ -83,9 +83,8 @@ public class DominoGUI extends javax.swing.JFrame {
     }
 
     /**
-     * Método que se encarga de generar en un primer momento el tablero, con las
-     * zonas marcadas mediante colores. Se ha seleccionado expresamente el verde
-     * como fondo principal para poder destacar así las fichas que estén jugadas
+     * Genera el tablero con los jugadores, sus respectivos bordes y el fondo
+     * verde para destacar un area de juego.
      */
     private void configuracio() {
 
@@ -103,22 +102,20 @@ public class DominoGUI extends javax.swing.JFrame {
 //        JLabel thumb = new JLabel();
 //        thumb.setIcon(icon);
         pCentre.setBackground(Color.GREEN);
-        
-            
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Label label1 = new Label(nombreJugadores[0]);
         Label label2 = new Label(nombreJugadores[1]);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(800, 800));
-        //posicio x,y centrada al cetre de la pantalla
+        //pCentrar
         this.setLocationRelativeTo(null);
-        //retornem el panell principal
+        //Vuelve al primer panel
         this.getContentPane();
         this.setLayout(new BorderLayout());
         pSud.add(label1);
         pnord.add(label2);
-        //this.add(pnord,BorderLayout.NORTH);
         this.add(pnord, BorderLayout.NORTH);
         this.add(pSud, BorderLayout.SOUTH);
         this.add(pOest, BorderLayout.WEST);
@@ -128,9 +125,8 @@ public class DominoGUI extends javax.swing.JFrame {
     }
 
     /**
-     * Este método se encarga de imprimir los botones en un primer momento, le
-     * llega el turno del jugador y mediante el array generado en el control,
-     * con todos los botones, vamos colocandolos en el tablero
+     * Metodo que se encarga de dibujar los botones y las fichas del jugador con
+     * el array de fichas de control.
      *
      * @param numeroJugador
      */
@@ -155,7 +151,6 @@ public class DominoGUI extends javax.swing.JFrame {
                     pnord.add(boton);
                 }
                 break;
-            //Futuras implementaciones, OTROS JUGADORES
             case 2:
                 break;
             case 3:
@@ -165,17 +160,15 @@ public class DominoGUI extends javax.swing.JFrame {
     }
 
     /**
-     * Este método se encarga de actualizar las fichas del mazo, le llega, array
-     * de fichas, turno y ficha jugada, la ficha jugada es básicamente para
-     * eliminarla después del array, entonces, a partir de el array de fichas
-     * genera de nuevo todos los botones, pero esta vez actualizados a la nueva
-     * situación del juego
+     * Actualiza el listado de fichas, le llega un array de fichas del jugador,
+     * el turno, y la ficha jugada, y se encarga de generar un array nuevo del
+     * jugador sin la ficha jugada.
      *
-     * @param juego
+     * @param fichasJugador
      * @param jugador
      * @param fichaJugada
      */
-    public void actualizarFichaJugador(ArrayList<Fitxa> juego, int jugador, Fitxa fichaJugada) {
+    public void actualizarFichaJugador(ArrayList<Fitxa> fichasJugador, int jugador, Fitxa fichaJugada) {
 
         JButton pasar = new JButton("PASAR");
         ArrayList<JButton> arrayBotones = gestioDominoIG.getBotonesFicha();
@@ -183,17 +176,17 @@ public class DominoGUI extends javax.swing.JFrame {
             case 0:
 
                 pSud.removeAll();
-                for (int i = 0; i < juego.size(); i++) {
+                for (int i = 0; i < fichasJugador.size(); i++) {
                     JButton b = new JButton();
-                    String numeros = juego.get(i).valors[0] + "-" + juego.get(i).valors[1];
+                    String numeros = fichasJugador.get(i).valors[0] + "-" + fichasJugador.get(i).valors[1];
                     ImageIcon im = new ImageIcon("fichas\\" + numeros + ".png");
-                    b.setActionCommand(juego.get(i).toString());
+                    b.setActionCommand(fichasJugador.get(i).toString());
                     b.addActionListener(gestioDominoIG);
                     b.setIcon(im);
-                    if (!fichaJugada.toString().equals(juego.get(i).toString())) {
+                    if (!fichaJugada.toString().equals(fichasJugador.get(i).toString())) {
                         pSud.add(b);
                     } else {
-                        gestioDominoIG.getJugador1().remove(juego.get(i));
+                        gestioDominoIG.getJugador1().remove(fichasJugador.get(i));
                     }
                 }
                 pasar.addActionListener(gestioDominoIG);
@@ -206,7 +199,7 @@ public class DominoGUI extends javax.swing.JFrame {
     }
 
     /**
-     * Le llega el array de fichas jugadas y las imprime en el tablero de juego
+     * Muestra las fichas jugadas con el nuevo estado de juego.
      *
      * @param fichasJugadas
      */
@@ -227,12 +220,12 @@ public class DominoGUI extends javax.swing.JFrame {
     }
 
     /**
-     * Muetra un panel de forma temporal para elegir donde colocar la ficha
+     * Selecciona donde se pone la ficha.
      *
      * @return
      */
     public boolean orientacionFicha() {
-        boolean orienzacion = true;
+        boolean sentido = true;
         Object[] izquierdaDerecha = {"Izquierda",
             "Derecha"};
         int orientacionFicha = JOptionPane.showOptionDialog(null,
@@ -245,14 +238,14 @@ public class DominoGUI extends javax.swing.JFrame {
 
         switch (orientacionFicha) {
             case 0:
-                orienzacion = true;
+                sentido = true;
                 break;
             case 1:
-                orienzacion = false;
+                sentido = false;
                 break;
         }
 
-        return orienzacion;
+        return sentido;
     }
 
     // Variables declaration - do not modify                     
