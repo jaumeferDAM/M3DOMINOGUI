@@ -5,7 +5,7 @@ import domino.model.Joc;
 import domino.model.Torn;
 import domino.model.Jugador;
 import domino.vista.VistaText;
-import dominogui.DominoGUI;
+import domino.grafica.DominoGUI;
 import dominogui.Opcions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,38 +16,38 @@ import javax.swing.JButton;
 
 public class GestioDominoIG implements ActionListener {
 
-    private Joc joc;
+    ArrayList<Fitxa> fichasJugador1;
     private Torn jugada;
-    Opcions opcions;
+    ArrayList<Fitxa> fichasJugador2;
     DominoGUI juego;
     String[] nombreJugadores;
-    ArrayList<JButton> arrayBotones;
+    private Joc joc;
+    Opcions opcions;
+    ArrayList<JButton> botonesFicha;
     int opcionMenu;
-    ArrayList<Fitxa> jugador1;
-    ArrayList<Fitxa> jugador2;
 
+    //Constructor
     public GestioDominoIG() {
         opcions = new Opcions(this);
         opcions.setVisible(true);
-        jugador1 = new ArrayList();
-        jugador2 = new ArrayList();
+        fichasJugador1 = new ArrayList();
+        fichasJugador2 = new ArrayList();
     }
 
     /**
-     * Sobreescribimos el método actionPerformed por que implementamos
-     * ActionListener debido a que aquí, desde el control, gestionaremos el
-     * juego entero, en este método, reciviremos las respuestas de todos los
-     * botones del juego
+     * Comprovar que boton se ha pulsado del juego recibiendo el evento y
+     * gestionar el juego.
      *
-     * @param e
+     * @param evento
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        String respuestaBoton = e.getActionCommand();
-        //boolean entrar = false;
+    public void actionPerformed(ActionEvent evento) {
+        String respuestaBoton = evento.getActionCommand();
 
         switch (respuestaBoton) {
+            //Se ha pulsado el boton de jugar
             case "Jugar":
+                //Recibimos el numero de jugadores e iniciamos el juego.
                 nombreJugadores = opcions.getNombreJugadores();
                 this.joc = new Joc(opcions.getNumeroJugadores(), 28, 7);
                 joc.iniciar(nombreJugadores);
@@ -56,31 +56,39 @@ public class GestioDominoIG implements ActionListener {
                 juego.setVisible(true);
                 opcions.setVisible(false);
                 jugada.inicial();
+                //Generamos las fichas para la primera jugada para todos los jugadores.
                 for (int i = 0; i < opcions.getNumeroJugadores(); i++) {
                     generarBotones(joc.getJugadors()[i].getFitxes(), i);
                     this.juego.imprimirBotones(i);
                 }
                 break;
+
+            //Se haa pulsado el boton de pasar
             case "Pasar":
                 jugada.passar();
                 break;
             default:
                 switch (joc.getTorn()) {
-                    //Turno para jugar yo
+                    //Mi turno
                     case 0:
+                        /* Convierto el string de ficha que devuelve la respuesta en un
+                            arrray de char, obtengo los numeros y los guardo en 
+                            un array.
+                         */
                         int[] array = new int[2];
                         char numeros[] = respuestaBoton.toCharArray();
-                        int numero1 = Character.getNumericValue(numeros[14]); 
-                        int numero2 = Character.getNumericValue(numeros[17]); 
+                        int numero1 = Character.getNumericValue(numeros[14]);
+                        int numero2 = Character.getNumericValue(numeros[17]);
                         array[0] = numero1;
                         array[1] = numero2;
+                        //Genero una ficha nueva y compruebo si hay que girarla.
                         Fitxa f = new Fitxa(array);
                         boolean girar = juego.orientacionFicha();
                         jugada.colocarUnaFitxa(f, girar);
                         if (!girar) {
                             f.canviarOrientacio();
                         }
-                        juego.actualizarFichaJugador(jugador1, joc.getTorn(), f);
+                        juego.actualizarFichaJugador(fichasJugador1, joc.getTorn(), f);
                         break;
                 }
                 joc.actualitzarEstat();
@@ -90,46 +98,46 @@ public class GestioDominoIG implements ActionListener {
     }
 
     public ArrayList<Fitxa> getJugador1() {
-        return jugador1;
+        return fichasJugador1;
     }
 
     /**
-     * Este método se encarga de generar, en un primer momento, todos los
-     * botones con las imágenes idoneas para cada botón
+     * Genera los botones del juego con su ficha correspondiente.
      *
      * @param fitxas
      * @param numeroJugador
      * @return
      */
     public ArrayList<JButton> generarBotones(List<Fitxa> fitxas, int numeroJugador) {
-        arrayBotones = new ArrayList();
+        botonesFicha = new ArrayList();
         if (numeroJugador == 0) {
-            //Mis botones
+            //Fichas jugador
             for (Fitxa f : fitxas) {
-                jugador1.add(f);
+                fichasJugador1.add(f);
                 JButton b = new JButton();
                 String numeros = f.valors[0] + "-" + f.valors[1];
                 ImageIcon im = new ImageIcon("fichas\\" + numeros + ".png");
                 b.setActionCommand(f.toString());
                 b.addActionListener(this);
                 b.setIcon(im);
-                arrayBotones.add(b);
+                botonesFicha.add(b);
             }
         } else {
+            //Fichas rival/es
             for (Fitxa f : fitxas) {
                 JButton b = new JButton();
-                jugador2.add(f);
+                fichasJugador2.add(f);
                 ImageIcon im = new ImageIcon("fichas\\backv.gif");
                 b.setActionCommand(f.toString());
                 b.setIcon(im);
-                arrayBotones.add(b);
+                botonesFicha.add(b);
             }
         }
-        return arrayBotones;
+        return botonesFicha;
     }
 
-    public ArrayList<JButton> getArrayBotones() {
-        return arrayBotones;
+    public ArrayList<JButton> getBotonesFicha() {
+        return botonesFicha;
     }
 
 }

@@ -12,15 +12,15 @@ import domino.model.Joc;
  * @author ALUMNEDAM
  */
 public class config {
-    private int jugadors, fitxes,numFitxesJugador;
-    
-    Joc j;
+
+    private int jugadors, fitxes, numFitxesJugador;
+
     public config(int jugadors, int fitxes, int numFitxesJugador) {
-        Joc j = new Joc(4,28,7);
-        
+        Joc joc = new Joc(4, 28, 7);
+
         this.jugadors = jugadors;
         this.fitxes = fitxes;
         this.numFitxesJugador = numFitxesJugador;
     }
-    
+
 }
